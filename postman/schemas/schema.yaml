@@ -1,0 +1,311 @@
+openapi: 3.0.0
+info:
+  title: Orders
+  description: 'This an API for managing orders that exist in the Union Fashion orders, allowing any desktop, web, mobile, or device application to integrate with orders made via our platform.'
+  version: '1.0'
+servers:
+- url: '{{ordersUrl}}'
+paths:
+  /orders:
+    post:
+      summary: Add Order
+      description: Creates a new order.
+      operationId: addOrder
+      tags:
+        - Orders
+      requestBody:
+        description: 'A order schema.'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+            example:
+              category: Jeans
+              brand: Union
+              color: black
+              gender: m
+              unitPrice: 49.99
+              unitSalePrice: 29.99
+      security:
+      - api_key: []
+      responses:
+        201:
+          description: 'Successful creation of order.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+              example:
+                status: success
+      deprecated: false
+    get:
+      summary: Get all orders by userId
+      description: Pulls a list of all orders
+      operationId: getOrders
+      tags:
+        - Orders
+      parameters:
+      - name: userId
+        in: query
+        description: 'User ID whose order to search for'
+        required: true
+        schema:
+          type: string
+          example: 'MTU1MDg2MTI2MDQ0Mg=='
+      - name: startDate
+        in: query
+        description: 'A starting UNIX timestamp.'
+        required: true
+        schema:
+          type: string
+          example: ''
+      - name: endDate
+        in: query
+        description: 'A starting UNIX timestamp.'
+        required: true
+        schema:
+          type: string
+          example: ''
+      security:
+      - api_key: []
+      responses:
+        200:
+          description: 'List of orders.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Orders'
+              example:
+                status: success
+      deprecated: false
+  '/orders/{orderId}':
+    get:
+      summary: Get order
+      description: Retrieves a single order.
+      operationId: getOrder
+      tags:
+      - Orders
+      parameters:
+        - name: orderId
+          in: path
+          description: The order ID to retrieve.
+          required: true
+          schema:
+            type: string
+            example: order-one
+      responses:
+        200:
+          description: 'Single order.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+              example:
+                status: success
+    put:
+      summary: Update order
+      description: Supports either full or partial updates.
+      operationId: updateOrder
+      tags:
+      - Orders
+      parameters:
+        - name: orderId
+          in: path
+          description: The order ID to retrieve.
+          required: true
+          schema:
+            type: string
+            example: 1550861260442-MTU1MDg2MTI2MDQ0Mg=-
+      security:
+      - api_key: []
+      requestBody:
+        description: 'A order object.'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+            example:
+              unitSalePrice: 29.99
+        required: true
+      responses:
+        204:
+          description: 'Successfully updated.'
+        404:
+          description: 'Order not found'
+        409:
+          description: 'Incorrect basket state'
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order_4xx'
+              example:
+                status: failed
+                order_id: Basket no longer in open state
+      deprecated: false
+    delete:
+      tags:
+      - Orders
+      summary: Delete
+      description: 'Delete an individual order.'
+      operationId: deleteOrder
+      parameters:
+        - name: orderId
+          in: path
+          description: The order ID to retrieve.
+          required: true
+          schema:
+            type: string
+            example: order-one
+      security:
+      - api_key: []
+      responses:
+        204:
+          description: 'Order deleted.'
+      deprecated: false
+  /orders/submit_to_purchase:
+    get:
+      summary: Submit to purchase
+      description: Submits an order to be purchased.
+      operationId: submitToPurchase
+      tags:
+        - Orders
+      security:
+      - api_key: []
+      parameters:
+      - name: id
+        in: query
+        description: 'Order ID'
+        required: true
+        schema:
+          type: string
+          example: '1550861260442-MTU1MDg2MTI2MDQ0Mg=-'
+      responses:
+        200:
+          description: 'Successful creation of Purchase.'
+        404:
+          description: 'Order not found'
+        409:
+          description: 'Incorrect basket state'
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order_4xx'
+              example:
+                status: failed
+                order_id: Basket no longer in open state        
+      deprecated: false
+components:
+  securitySchemes:
+    api_key:
+      type: "apiKey"
+      name: "x-api-key"
+      in: "header"
+  schemas:
+    Item:
+      title: Item
+      required:
+      - id
+      - quantity
+      type: object
+      properties:
+        id:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+      example:
+        id: XYZ-JEAN-123
+        quantity: 1
+    Address:
+      title: Address
+      required:
+      - address1
+      - address2
+      - city
+      - state
+      - zip
+      type: object
+      properties:
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+      example:
+        address1:     1313 Mockingbird Ln.
+        address2:     Apt E.
+        city:         Wilmington
+        state:        DE,
+        zip:          00000
+    Orders:
+      type: array
+      items:
+        $ref: '#/components/schemas/Order'
+    Order:
+      title: Order
+      required:
+      - identifier
+      - name
+      - shippingAddress
+      - billingAddress
+      - paymentType
+      - storedPaymentID
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: array
+          items:
+            $ref: "#/components/schemas/Item"
+        shippingAddress:
+            $ref: "#/components/schemas/Address"
+        billingAddress:
+            $ref: "#/components/schemas/Address"
+        paymentType:
+            type: string
+        storedPaymentID:
+          type: integer
+          format: int32
+      example:
+        id: 1550861260442-MTU1MDg2MTI2MDQ0Mg==
+        items:
+            id: XYZ-JEAN-123
+            quantity: 2
+        shippingAddress: 
+            address1:     1313 Mockingbird Ln.
+            address2:     Apt E.
+            city:         Wilmington
+            state:        DE
+            zip:          00000
+        billingAddress: 
+            address1:     1313 Mockingbird Ln.
+            address2:     Apt E.
+            city:         Wilmington
+            state:        DE
+            zip:          00000
+        paymentType:      stored
+        storedPaymentID:  1
+    Order_4xx:
+      title: Order failure
+      required:
+      - status
+      type: object
+      properties:
+        status:
+          type: string
+        order_id:
+          type: string
+      example:
+        status: failed
+        message: Order not modifiable
+tags:
+- name: Orders
+  description: 'A order object.'

@@ -1,0 +1,763 @@
+{
+    "info": {
+        "_postman_id": "ceee5df1-ca57-4e48-8c4a-8003bacffbb9",
+        "name": "Orders",
+        "description": "# Orders - Endpoints for managing a user's order\n<img src=\"https://www.pngkit.com/png/detail/299-2992841_complete-order-comments-order-icon-png-transparent.png\" alt=\"drawing\" width=\"30\" height=\"30\"/></img>\n\nThis collection includes api's for managing and updating an order during its finalization and after purchase. Prior to completing the purchase, a user can update information associated with the order including shipping and billing addresses as well as payment method. Submitting an order to purchase will complete the purchase process, permanently associate the relevant basket information with the order, and delete the associated basket.\n\nOrders are created from the `Submit to order` endpoint in the [Basket](https://retail-demo.postman.co/workspace/100e5a1b-07cd-4b14-b2e1-df8da7d81ae2/collection/16340833-02074e01-b519-4667-b1ac-92ece5621802?ctx=documentation) collection",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Get all orders by userId",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "id": "117776a4-5e89-4b97-a903-76c239147c6a",
+                        "type": "text/javascript",
+                        "exec": [
+                            "var jsonData = pm.response.json();",
+                            "",
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "pm.test(\"Expect an orders array\", function () {",
+                            "    pm.expect(jsonData).to.have.property(\"orders\");",
+                            "});",
+                            "",
+                            "pm.test(\"Expect orders to have an ID and items\", function () {",
+                            "    for (var i = 0; i < jsonData.orders.length; i++) {",
+                            "        pm.expect(jsonData.orders[i]).to.include.all.keys(\"id\", \"items\");",
+                            "    }",
+                            "});",
+                            "",
+                            "pm.test(\"Expect item ID to be string\", function () {",
+                            "    for (var i = 0; i < jsonData.orders.length; i++) {",
+                            "        pm.expect(jsonData.orders[i].id).to.be.a('string');",
+                            "    }",
+                            "});",
+                            "",
+                            "pm.test(\"Expect items to be an array\", function () {",
+                            "    for (var i = 0; i < jsonData.orders.length; i++) {",
+                            "        pm.expect(jsonData.orders[i].items).to.be.an('array');",
+                            "    }",
+                            "});"
+                        ]
+                    }
+                }
+            ],
+            "id": "02c8b054-dc45-46cf-9943-4d0cb560d5e4",
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "auth": {
+                    "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{ordersUrl}}/orders?userId=MTU1MDg2MTI2MDQ0Mg==",
+                    "host": [
+                        "{{ordersUrl}}"
+                    ],
+                    "path": [
+                        "orders"
+                    ],
+                    "query": [
+                        {
+                            "description": "A starting UNIX timestamp.",
+                            "key": "startDate",
+                            "value": "{{$timestamp}}",
+                            "disabled": true
+                        },
+                        {
+                            "description": "An ending UNIX timestamp.",
+                            "key": "endDate",
+                            "value": "{{$timestamp}}",
+                            "disabled": true
+                        },
+                        {
+                            "description": "The ID of the user who&amp;amp;amp;amp;amp;amp;#39;s orders should be returned.",
+                            "key": "userId",
+                            "value": "MTU1MDg2MTI2MDQ0Mg=="
+                        }
+                    ]
+                },
+                "description": "Pulls a list of all orders"
+            },
+            "response": [
+                {
+                    "id": "838f4d52-7bb8-45ab-b6ac-878cf5c949ef",
+                    "name": "200 - Success",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{ordersUrl}}/orders?userId=MTU1MDg2MTI2MDQ0Mg==",
+                            "host": [
+                                "{{ordersUrl}}"
+                            ],
+                            "path": [
+                                "orders"
+                            ],
+                            "query": [
+                                {
+                                    "key": "start",
+                                    "value": "",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "end",
+                                    "value": "<string>",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "userId",
+                                    "value": "MTU1MDg2MTI2MDQ0Mg=="
+                                }
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "Text",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "responseTime": null,
+                    "body": "{\n    \"orders\": [\n        {\n            \"id\": \"1550861260442-MTU1MDg2MTI2MDQ0Mg==\",\n            \"items\": [\n                {\n                \"id\": \"XYZ-JEAN-123\",\n                \"quantity\": 2\n                }\n            ],\n            \"shippingAddress\": \n                {\n                    \"address1\":     \"1313 Mockingbird Ln.\",\n                    \"address2\":     \"Apt E.\",\n                    \"city\":         \"Wilmington\",\n                    \"state\":        \"DE\",\n                    \"zip\":          \"00000\"\n                },\n            \"billingAddress\": \n                {\n                    \"address1\":     \"1313 Mockingbird Ln.\",\n                    \"address2\": \t\"Apt E.\",\n                    \"city\":\t\t    \"Wilmington\",\n                    \"state\":        \"DE\",\n                    \"zip\":          \"00000\"\n                },\n            \"paymentType\":      \"stored\",\n            \"storedPaymentID\":\t1\n        }\n    ]\n}"
+                },
+                {
+                    "id": "251731ef-477f-4399-b9f5-416786f15f42",
+                    "name": "404 - User not found",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{ordersUrl}}/orders?userId=MTU1MDg2MTI2MDQ0Mg==",
+                            "host": [
+                                "{{ordersUrl}}"
+                            ],
+                            "path": [
+                                "orders"
+                            ],
+                            "query": [
+                                {
+                                    "key": "userId",
+                                    "value": "MTU1MDg2MTI2MDQ0Mg=="
+                                }
+                            ]
+                        }
+                    },
+                    "status": "Not Found",
+                    "code": 404,
+                    "_postman_previewlanguage": "Text",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "responseTime": null,
+                    "body": "{\n    \"status\":   \"failed\",\n    \"message\":  \"User does not exist\"\n}"
+                }
+            ]
+        },
+        {
+            "name": "Submit to purchase",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "id": "35a660a6-a4d6-4f3f-9755-c7a7d78922df",
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "id": "324cb281-0932-4dd0-ab93-1ee97fddbc00",
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "auth": {
+                    "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{ordersUrl}}/orders/submit_to_purchase?id=1550861260442-MTU1MDg2MTI2MDQ0Mg=-",
+                    "host": [
+                        "{{ordersUrl}}"
+                    ],
+                    "path": [
+                        "orders",
+                        "submit_to_purchase"
+                    ],
+                    "query": [
+                        {
+                            "key": "id",
+                            "value": "1550861260442-MTU1MDg2MTI2MDQ0Mg=-"
+                        }
+                    ]
+                },
+                "description": "Submits an order to be purchased."
+            },
+            "response": [
+                {
+                    "id": "bee68e1e-0ab6-46d3-8402-eaf0e83a596b",
+                    "name": "200 - Purchase created",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{ordersUrl}}/orders/submit_to_purchase?id=1550861260442-MTU1MDg2MTI2MDQ0Mg=-",
+                            "host": [
+                                "{{ordersUrl}}"
+                            ],
+                            "path": [
+                                "orders",
+                                "submit_to_purchase"
+                            ],
+                            "query": [
+                                {
+                                    "key": "id",
+                                    "value": "1550861260442-MTU1MDg2MTI2MDQ0Mg=-"
+                                }
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "Text",
+                    "header": [],
+                    "cookie": [],
+                    "responseTime": null,
+                    "body": ""
+                },
+                {
+                    "id": "5203aa02-afe8-471e-88b1-b15d2d294fed",
+                    "name": "404 - Order not found",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{ordersUrl}}/orders/submit_to_purchase?id=1550861260442-MTU1MDg2MTI2MDQ0Mg==",
+                            "host": [
+                                "{{ordersUrl}}"
+                            ],
+                            "path": [
+                                "orders",
+                                "submit_to_purchase"
+                            ],
+                            "query": [
+                                {
+                                    "key": "id",
+                                    "value": "1550861260442-MTU1MDg2MTI2MDQ0Mg=="
+                                }
+                            ]
+                        }
+                    },
+                    "status": "Not Found",
+                    "code": 404,
+                    "_postman_previewlanguage": "Text",
+                    "header": [],
+                    "cookie": [],
+                    "responseTime": null,
+                    "body": ""
+                },
+                {
+                    "id": "d0525f68-272a-4970-97f2-c5ccd4cebcad",
+                    "name": "409 - Order not modifiable",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{ordersUrl}}/orders/submit_to_purchase?id=1550861260442-MTU1MDg2MTI2MDQ0Mg==",
+                            "host": [
+                                "{{ordersUrl}}"
+                            ],
+                            "path": [
+                                "orders",
+                                "submit_to_purchase"
+                            ],
+                            "query": [
+                                {
+                                    "key": "id",
+                                    "value": "1550861260442-MTU1MDg2MTI2MDQ0Mg=="
+                                }
+                            ]
+                        }
+                    },
+                    "status": "Conflict",
+                    "code": 409,
+                    "_postman_previewlanguage": "Text",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "responseTime": null,
+                    "body": "{\n    \"status\":   \"failed\",\n    \"message\":  \"Order no longer modifiable\"\n}"
+                }
+            ]
+        },
+        {
+            "name": "Update order",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "id": "4665ac00-abdf-4183-9801-67c8061b22bd",
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "id": "b5bda337-02c1-4c94-ae36-7ee6ecec31a3",
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "auth": {
+                    "type": "noauth"
+                },
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"shippingAddress\": \n            {\n                \"address1\":     \"1313 Mockingbird Ln.\",\n                \"address2\":     \"Apt E.\",\n                \"city\":         \"Wilmington\",\n                \"state\":        \"DE\",\n                \"zip\":          \"00000\"\n            },\n        \"billingAddress\": \n            {\n                \"address1\":     \"1313 Mockingbird Ln.\",\n                \"address2\": \t\"Apt E.\",\n                \"city\":\t\t    \"Wilmington\",\n                \"state\":        \"DE\",\n                \"zip\":          \"00000\"\n            },\n\t\"paymentType\":      \"stored\",\n\t\"storedPaymentID\":\t0\n}\n"
+                },
+                "url": {
+                    "raw": "{{ordersUrl}}/orders/:orderId",
+                    "host": [
+                        "{{ordersUrl}}"
+                    ],
+                    "path": [
+                        "orders",
+                        ":orderId"
+                    ],
+                    "variable": [
+                        {
+                            "key": "orderId",
+                            "value": "1550861260442-MTU1MDg2MTI2MDQ0Mg=-"
+                        }
+                    ]
+                },
+                "description": "Change the quantity of items/an item for a given basket."
+            },
+            "response": [
+                {
+                    "id": "5976c728-bc84-4d8b-9418-5b9d307c2c30",
+                    "name": "200 - OK",
+                    "originalRequest": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "<string>"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"items\": [\n        {\n            \"id\": \"XYZ-JEAN-123\",\n            \"quantity\": 1\n        },\n        {\n            \"id\": \"ABC-TOP-789\",\n            \"quantity\": 3\n        }\n    ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{ordersUrl}}/orders/1550861260442-MTU1MDg2MTI2MDQ0Mg=-",
+                            "host": [
+                                "{{ordersUrl}}"
+                            ],
+                            "path": [
+                                "orders",
+                                "1550861260442-MTU1MDg2MTI2MDQ0Mg=-"
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "Text",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "responseTime": null,
+                    "body": ""
+                },
+                {
+                    "id": "3c7311e8-002f-46ec-a70d-f89b8fc212c7",
+                    "name": "404 - Order not found",
+                    "originalRequest": {
+                        "method": "PUT",
+                        "header": [],
+                        "url": {
+                            "raw": "{{ordersUrl}}/orders/1550861260442-MTU1MDg2MTI2MDQ0Mg==",
+                            "host": [
+                                "{{ordersUrl}}"
+                            ],
+                            "path": [
+                                "orders",
+                                "1550861260442-MTU1MDg2MTI2MDQ0Mg=="
+                            ]
+                        }
+                    },
+                    "status": "Not Found",
+                    "code": 404,
+                    "_postman_previewlanguage": "Text",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "responseTime": null,
+                    "body": ""
+                },
+                {
+                    "id": "2fb33d82-bbe3-47d9-8fe1-8294e4425a23",
+                    "name": "409 - Order not modifiable",
+                    "originalRequest": {
+                        "method": "PUT",
+                        "header": [],
+                        "url": {
+                            "raw": "{{ordersUrl}}/orders/1550861260442-MTU1MDg2MTI2MDQ0Mg==",
+                            "host": [
+                                "{{ordersUrl}}"
+                            ],
+                            "path": [
+                                "orders",
+                                "1550861260442-MTU1MDg2MTI2MDQ0Mg=="
+                            ]
+                        }
+                    },
+                    "status": "Conflict",
+                    "code": 409,
+                    "_postman_previewlanguage": "Text",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "responseTime": null,
+                    "body": "{\n    \"status\":   \"failed\",\n    \"message\":  \"Order not modifiable\"\n}"
+                }
+            ]
+        },
+        {
+            "name": "Get order",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "id": "214024f3-b410-47bf-aa57-6230f07d6ad2",
+                        "type": "text/javascript",
+                        "exec": [
+                            "var jsonData = pm.response.json();",
+                            "",
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "pm.test(\"Expect there to be an orders element\", function () {",
+                            "    pm.expect(jsonData).to.have.property(\"order\");",
+                            "});",
+                            "",
+                            "pm.test(\"Expect orders to have an ID and items\", function () {",
+                            "    for (var i = 0; i < jsonData.order.length; i++) {",
+                            "        pm.expect(jsonData.orders[i]).to.include.all.keys(\"id\", \"items\");",
+                            "    }",
+                            "});",
+                            "",
+                            "pm.test(\"Expect item ID to be string\", function () {",
+                            "    for (var i = 0; i < jsonData.order.length; i++) {",
+                            "        pm.expect(jsonData.order.id).to.be.a('string');",
+                            "    }",
+                            "});",
+                            "",
+                            "pm.test(\"Expect items to be an array\", function () {",
+                            "    for (var i = 0; i < jsonData.order.length; i++) {",
+                            "        pm.expect(jsonData.order.items).to.be.an('array');",
+                            "    }",
+                            "});"
+                        ]
+                    }
+                }
+            ],
+            "id": "c7eb6bc0-0d6f-47ba-bf3c-67c75925bf82",
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
+            "request": {
+                "auth": {
+                    "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{ordersUrl}}/orders?id=1550861260442-MTU1MDg2MTI2MDQ0Mg==",
+                    "host": [
+                        "{{ordersUrl}}"
+                    ],
+                    "path": [
+                        "orders"
+                    ],
+                    "query": [
+                        {
+                            "description": "The order ID to return.",
+                            "key": "id",
+                            "value": "1550861260442-MTU1MDg2MTI2MDQ0Mg=="
+                        }
+                    ]
+                },
+                "description": "Initiate a return. The order id persists for futher reference."
+            },
+            "response": [
+                {
+                    "id": "9dc50450-ae0f-4490-8df6-9a9609f8335c",
+                    "name": "200 - Success",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{ordersUrl}}/orders?id=1550861260442-MTU1MDg2MTI2MDQ0Mg==",
+                            "host": [
+                                "{{ordersUrl}}"
+                            ],
+                            "path": [
+                                "orders"
+                            ],
+                            "query": [
+                                {
+                                    "key": "id",
+                                    "value": "1550861260442-MTU1MDg2MTI2MDQ0Mg=="
+                                }
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "Text",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "responseTime": null,
+                    "body": "{\n    \"order\": \n        {\n            \"id\": \"1550861260442-MTU1MDg2MTI2MDQ0Mg==\",\n            \"items\": [\n                {\n                \"id\": \"XYZ-JEAN-123\",\n                \"quantity\": 2\n                }\n            ],\n            \"shippingAddress\": \n                {\n                    \"address1\":     \"1313 Mockingbird Ln.\",\n                    \"address2\":     \"Apt E.\",\n                    \"city\":         \"Wilmington\",\n                    \"state\":        \"DE\",\n                    \"zip\":          \"00000\"\n                },\n            \"billingAddress\": \n                {\n                    \"address1\":     \"1313 Mockingbird Ln.\",\n                    \"address2\": \t\"Apt E.\",\n                    \"city\":\t\t    \"Wilmington\",\n                    \"state\":        \"DE\",\n                    \"zip\":          \"00000\"\n                },\n            \"paymentType\":      \"stored\",\n            \"storedPaymentID\":\t1\n        }\n}"
+                },
+                {
+                    "id": "4285bd72-016c-4458-86e5-e6e0756dee3f",
+                    "name": "404 - Order not found",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{ordersUrl}}/orders?id=1550861260442-MTU1MDg2MTI2MDQ0Mg==",
+                            "host": [
+                                "{{ordersUrl}}"
+                            ],
+                            "path": [
+                                "orders"
+                            ],
+                            "query": [
+                                {
+                                    "key": "id",
+                                    "value": "1550861260442-MTU1MDg2MTI2MDQ0Mg=="
+                                }
+                            ]
+                        }
+                    },
+                    "status": "Not Found",
+                    "code": 404,
+                    "_postman_previewlanguage": "Text",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "cookie": [],
+                    "responseTime": null,
+                    "body": "{\n    \"status\":   \"failed\",\n    \"message\":  \"Order does not exist\"\n}"
+                }
+            ]
+        },
+        {
+            "name": "Add Order",
+            "id": "28dc4fcf-861c-475b-9fae-61b67d2e43ec",
+            "request": {
+                "auth": {
+                    "type": "apikey",
+                    "apikey": [
+                        {
+                            "key": "key",
+                            "value": "x-api-key",
+                            "type": "string"
+                        },
+                        {
+                            "key": "value",
+                            "value": true,
+                            "type": "boolean"
+                        },
+                        {
+                            "key": "in",
+                            "value": "header",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"identifier\": \"nisi sed voluptate\",\n    \"name\": \"voluptate tempor dolore exercitation\",\n    \"description\": \"commodo proident anim nulla\",\n    \"image\": \"voluptate velit nostrud\",\n    \"url\": \"qui ipsum irure\",\n    \"brand\": \"incididunt proident consequat dolore\",\n    \"category\": \"nostrud fugiat eiusmod\",\n    \"color\": \"reprehenderit sit\",\n    \"logo\": \"sed qui aliqua in\",\n    \"manufacturer\": \"quis sunt ut\",\n    \"material\": \"comm\",\n    \"model\": \"ea\",\n    \"releaseDate\": \"qui laborum sed\",\n    \"sku\": \"id voluptate Duis\",\n    \"width\": \"incididunt ut\",\n    \"weight\": \"est Excepteur ea sit\",\n    \"depth\": \"cillum officia qui id\",\n    \"height\": \"minim anim labore pro\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/orders",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "orders"
+                    ]
+                },
+                "description": "Creates a new order."
+            },
+            "response": []
+        },
+        {
+            "name": "Delete",
+            "id": "c29d05fa-595c-48e0-b548-f3210a1d8fa1",
+            "request": {
+                "auth": {
+                    "type": "apikey",
+                    "apikey": [
+                        {
+                            "key": "key",
+                            "value": "x-api-key",
+                            "type": "string"
+                        },
+                        {
+                            "key": "value",
+                            "value": true,
+                            "type": "boolean"
+                        },
+                        {
+                            "key": "in",
+                            "value": "header",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/orders/:orderId",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "orders",
+                        ":orderId"
+                    ],
+                    "variable": [
+                        {
+                            "key": "orderId",
+                            "value": "mollit minim Lorem",
+                            "description": "(Required) The order ID to retrieve."
+                        }
+                    ]
+                },
+                "description": "Delete an individual order."
+            },
+            "response": [
+                {
+                    "id": "3ad44781-cfd4-42bf-8ee0-d797d93c5505",
+                    "name": "Order deleted.",
+                    "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "x-api-key",
+                                "value": "<API Key>"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/orders/:orderId",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "orders",
+                                ":orderId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "orderId"
+                                }
+                            ]
+                        }
+                    },
+                    "status": "No Content",
+                    "code": 204,
+                    "_postman_previewlanguage": "Text",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "text/plain"
+                        }
+                    ],
+                    "cookie": [],
+                    "responseTime": null,
+                    "body": ""
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "id": "13f39e3a-31a6-4650-b905-304572ff6022",
+            "key": "baseUrl",
+            "value": "{{ordersUrl}}",
+            "type": "string"
+        }
+    ]
+}
